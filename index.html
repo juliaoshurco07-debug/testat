@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiquaLibris · Biblioteca ta digitală</title>
+    <meta name="description" content="AntiquaLibris – bibliotecă digitală personală">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+
+<div id="cookieBox" class="cookie-box">
+    <span>🍪 Folosim cookie-uri pentru a-ți salva biblioteca.</span>
+    <button id="acceptCookiesBtn" class="btn-cookie">Accept</button>
+</div>
+
+<div class="app">
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">
+                <span>📚✨</span>
+                <h1>AntiquaLibris</h1>
+            </div>
+            <div class="header-right">
+                <select id="langSelect" class="lang-select">
+                    <option value="ro">🇷🇴 RO</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="ru">🇷🇺 RU</option>
+                </select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Caută carte...">
+                <button id="searchBtn" class="btn-icon">🔍</button>
+                <div id="authBox" class="auth-box">
+                    <button id="registerBtn" class="btn-outline">📝 Înregistrare</button>
+                    <button id="loginBtn" class="btn-outline">🔑 Intră în cont</button>
+                </div>
+                <div id="userBox" class="user-box" style="display:none;">
+                    <span>👤</span>
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="btn-icon">✕</button>
+                </div>
+                <button id="themeBtn" class="btn-icon">🌙</button>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="#" class="nav-link active" data-page="home">🏠 Acasă</a>
+            <a href="#" class="nav-link" data-page="books">📖 Biblioteca mea</a>
+            <a href="#" class="nav-link" data-page="stats">📊 Statistici</a>
+            <a href="#" class="nav-link" data-page="about">📜 Despre noi</a>
+        </nav>
+    </header>
+
+    <div id="pageHome" class="page">
+        <div class="hero">
+            <h2>📚 Biblioteca ta digitală personală</h2>
+            <p>Adaugă, organizează și citește cărțile tale preferate</p>
+            <button class="btn-hero" id="startBtn">📖 Începe acum gratuit</button>
+        </div>
+        <div class="section">
+            <h2 class="section-title">✨ Ce poți face</h2>
+            <div class="cards-4">
+                <div class="card"><div class="card-icon">📤</div><h3>Adaugă cărți</h3><p>Încarcă PDF-uri sau adaugă manual.</p></div>
+                <div class="card"><div class="card-icon">📖</div><h3>Citește</h3><p>Deschide PDF-urile direct în browser.</p></div>
+                <div class="card"><div class="card-icon">📊</div><h3>Statistici</h3><p>Vezi câte cărți ai citit.</p></div>
+                <div class="card"><div class="card-icon">📤</div><h3>Export/Import</h3><p>Salvează biblioteca în JSON.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pageBooks" class="page" style="display:none;">
+        <div class="section">
+            <h2 class="section-title">📖 Biblioteca mea</h2>
+            <div class="controls">
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">📚 Toate</button>
+                    <button class="filter-btn" data-filter="read">✅ Citite</button>
+                    <button class="filter-btn" data-filter="unread">📖 Necitite</button>
+                    <button class="filter-btn" data-filter="favorite">⭐ Favorite</button>
+                </div>
+                <div class="actions">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="default">📋 Implicit</option>
+                        <option value="title-asc">🔤 Titlu A-Z</option>
+                        <option value="author-asc">👤 Autor A-Z</option>
+                    </select>
+                    <button id="exportBtn" class="btn-sm">📤 Export</button>
+                    <button id="importBtn" class="btn-sm">📥 Import</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none;">
+                    <button id="addBookBtn" class="btn-main">+ Adaugă carte</button>
+                </div>
+            </div>
+            <div id="addForm" class="add-form" style="display:none;">
+                <h3>📚 Adaugă carte</h3>
+                <div class="form-row">
+                    <input type="text" id="titleInp" placeholder="Titlu *" class="inp">
+                    <input type="text" id="authorInp" placeholder="Autor *" class="inp">
+                    <input type="number" id="yearInp" placeholder="An" class="inp">
+                    <select id="genreInp" class="inp">
+                        <option value="Roman">📖 Roman</option>
+                        <option value="Poezie">🎭 Poezie</option>
+                        <option value="SF & Fantasy">🚀 SF & Fantasy</option>
+                        <option value="Istorie">🏛️ Istorie</option>
+                        <option value="Thriller">🔪 Thriller</option>
+                        <option value="Filozofie">💭 Filozofie</option>
+                        <option value="Biografie">👤 Biografie</option>
+                        <option value="Altele">📚 Altele</option>
+                    </select>
+                    <input type="file" id="pdfInp" accept=".pdf" class="inp">
+                </div>
+                <div class="form-actions">
+                    <button id="confirmAddBtn" class="btn-main">✅ Adaugă</button>
+                    <button id="cancelAddBtn" class="btn-secondary">Anulează</button>
+                </div>
+            </div>
+            <div id="booksGrid" class="books-grid">
+                <div class="empty">📭 Biblioteca este goală</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pageStats" class="page" style="display:none;">
+        <div class="section">
+            <h2 class="section-title">📊 Statistici</h2>
+            <div class="stats-row">
+                <div class="stat-box"><span>📚</span><div id="sTotal">0</div><small>Total</small></div>
+                <div class="stat-box green"><span>✅</span><div id="sRead">0</div><small>Citite</small></div>
+                <div class="stat-box yellow"><span>📖</span><div id="sUnread">0</div><small>Necitite</small></div>
+                <div class="stat-box accent"><span>⭐</span><div id="sFav">0</div><small>Favorite</small></div>
+                <div class="stat-box"><span>📊</span><div id="sRate">0%</div><small>Rată</small></div>
+            </div>
+            <div class="chart" id="genreChart">
+                <h3>Distribuție pe genuri</h3>
+                <p>Adaugă cărți...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="pageAbout" class="page" style="display:none;">
+        <div class="about-hero">
+            <h2>📜 Despre AntiquaLibris</h2>
+            <p>Povestea din spatele bibliotecii tale digitale</p>
+        </div>
+        <div class="about-content">
+            <div class="about-block"><div class="ab-icon">📚</div><div><h3>Ce este AntiquaLibris?</h3><p>Biblioteca ta digitală personală.</p></div></div>
+            <div class="about-cta"><h3>Începe chiar acum!</h3><button class="btn-hero" id="ctaBtn">📖 Creează-ți biblioteca</button></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom"><p>© 2025 AntiquaLibris · Toate datele sunt salvate local</p></div>
+    </footer>
+</div>
+
+<!-- MODALS -->
+<div id="registerModal" class="modal" style="display:none;">
+    <div class="modal-card">
+        <div class="modal-head"><h3>📝 Înregistrare</h3><button id="closeRegModal" class="modal-x">✕</button></div>
+        <div class="modal-body">
+            <input type="text" id="regName" placeholder="Nume *" class="inp">
+            <input type="password" id="regPass" placeholder="Parolă *" class="inp">
+            <div><label>Genuri preferate:</label><div class="checks"><label><input type="checkbox" value="Roman"> Roman</label><label><input type="checkbox" value="Poezie"> Poezie</label><label><input type="checkbox" value="SF & Fantasy"> SF</label><label><input type="checkbox" value="Istorie"> Istorie</label></div></div>
+            <button id="confirmRegBtn" class="btn-main">Creează cont</button>
+        </div>
+    </div>
+</div>
+
+<div id="loginModal" class="modal" style="display:none;">
+    <div class="modal-card">
+        <div class="modal-head"><h3>🔑 Autentificare</h3><button id="closeLogModal" class="modal-x">✕</button></div>
+        <div class="modal-body">
+            <input type="text" id="loginName" placeholder="Nume *" class="inp">
+            <input type="password" id="loginPass" placeholder="Parolă *" class="inp">
+            <button id="confirmLogBtn" class="btn-main">Conectare</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal" style="display:none;">
+    <div class="modal-card">
+        <div class="modal-head"><h3>🗑️ Șterge cartea</h3><button id="closeDelModal" class="modal-x">✕</button></div>
+        <div class="modal-body">
+            <p id="deleteMsg">Ești sigur?</p>
+            <div style="display:flex;gap:8px;"><button id="confirmDelBtn" class="btn-main">Da</button><button id="cancelDelBtn" class="btn-secondary">Nu</button></div>
+        </div>
+    </div>
+</div>
+
+<div id="readingModal" class="modal" style="display:none;">
+    <div class="reading-box">
+        <div class="reading-head"><h3 id="readingTitle"></h3><button id="closeReadBtn" class="modal-x">✕</button></div>
+        <div class="reading-area"><canvas id="leftCanvas"></canvas><div class="spine"></div><canvas id="rightCanvas"></canvas></div>
+        <div class="reading-ctrl">
+            <button id="prevBtn">◀</button><span id="pageInfo">-</span><button id="nextBtn">▶</button>
+            <div class="prog-bar"><div id="progFill" class="prog-fill"></div></div><span id="progPct">0%</span>
+            <button id="saveProgBtn">💾 Salvează</button><button id="markDoneBtn">✅ Terminată</button>
+        </div>
+    </div>
+</div>
+
+<div id="chatWidget" class="chat-widget">
+    <button id="chatToggleBtn" class="chat-bubble">💬</button>
+    <div id="chatWindow" class="chat-window" style="display:none;">
+        <div class="chat-window-header"><span>🤖 Asistent</span><button id="chatCloseBtn" class="chat-close-btn">✕</button></div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-quick-btns">
+            <button onclick="sendQuickMsg('Cum adaug o carte?')" class="quick-btn">📚 Adăugare</button>
+            <button onclick="sendQuickMsg('Cum citesc un PDF?')" class="quick-btn">📖 Citire</button>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Scrie un mesaj...">
+            <button id="chatSendBtn" class="chat-send-btn">➤</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
